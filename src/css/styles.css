@@ -55,10 +55,11 @@ body {
   gap: 30px;
   justify-content: center;
   margin-top: 40px;
+  margin-bottom: 40px;
 }
 
 .photo-card {
-  width: 600px;
+  width: 450px;
   box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2);
 }
 
@@ -71,16 +72,16 @@ body {
 }
 
 .photo-card img {
-  width: 600px;
-  height: 400px;
+  width: 450px;
+  height: 250px;
   overflow: hidden;
 }
 
 .info {
   display: flex;
-  gap: 20px;
+  gap: 10px;
   justify-content: space-between;
-  padding: 20px 50px;
+  padding: 15px 35px;
 }
 
 .info-item {
@@ -91,5 +92,30 @@ body {
 
 .info-item p {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
+}
+
+.load-more {
+  display: none;
+  border-radius: 5px;
+  background-color: rgb(250, 250, 250);
+  font-weight: 700;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  padding: 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.is-active {
+display: flex;
+}
+
+.load-more:hover {
+  background-color: rgb(121, 255, 141);
+}
+
+.load-more:focus {
+  background-color: rgb(121, 255, 141);
 }

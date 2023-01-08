@@ -1,174 +1,121 @@
+
 import Notiflix from 'notiflix';
-import debounce from 'lodash.debounce';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-
+import PicturesAPI from './Axios';
 import './css/styles.css';
-import axios from 'axios';
-// import { fetchCountries } from '../src/FindCountry';
 
-const API_KEY = '32602005-90d975b9811b1acb6e8234db3';
-
-const inputField = document.querySelector('input');
-const inputButton = document.querySelector('button');
+const formEl = document.querySelector('.search-form');
+const inputEl = document.querySelector('input');
 const galleryImage = document.querySelector('.gallery');
+const loadMoreBtn = document.querySelector('.load-more');
 
-inputButton.addEventListener('click', e => {
+const picturesAPI = new PicturesAPI();
+
+formEl.addEventListener('submit', onFormSubmit);
+loadMoreBtn.addEventListener('click', loadMorePhoto);
+
+
+let totalCount = 0;
+
+function onFormSubmit(e) {
   e.preventDefault();
-  getCards({
-    value: inputField.value,
-  });
-});
+  totalCount = 0;
 
-function getCards({ value }) {
-  const urlAPI = `https://pixabay.com/api/?key=${API_KEY}&q=${value}&image_type=photo&orientation=horizontal&safesearch=true`;
-  if (value.length !== 0) {
-    return axios
-      .get(urlAPI)
-      .then(res => res.data)
-      .then(({ hits }) => {
-        render(hits);
-      })
-
-      .catch(function (error) {
-        // handle error
-      });
-  }
-}
-
-function render(hits) {
   galleryImage.innerHTML = '';
-  if (hits.length === 0)
-    // handle error
+  picturesAPI.query = inputEl.value.trim();
+  picturesAPI.resetPage();
+  picturesAPI.hideLoadMoreBtn();
+
+  if (picturesAPI.query === '') {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
 
-  const hitsElements = hits.map(
-    ({
-      webformatURL,
-      largeImageURL,
-      tags,
-      likes,
-      views,
-      comments,
-      downloads,
-    }) => {
-      return `
-<div class="photo-card">
-<a class="gallery__item" href="${largeImageURL}">
-  <img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
-  <div class="info">
-    <div class="info-item">
-      <p><b>Likes: </b></p> <p>${likes}</p>
-    </div>
-    <div class="info-item">
-      <p><b>Views: </b></p> <p>${views}</p>
-    </div>
-    <div class="info-item">
-      <p><b>Comments: </b></p> <p>${comments}</p>
-    </div>
-    <div class="info-item">
-      <p><b>Downloads: </b></p> <p>${downloads}</p>
-    </div>
-  </div>
-</div>`;
-    }
-  );
+    return;
+  }
 
-  galleryImage.insertAdjacentHTML('beforeend', hitsElements.join(''));
+  fetchPhotosAndCreatePage();
+}
+
+function loadMorePhoto() {
+  picturesAPI.query = inputEl.value.trim();
+  picturesAPI.incrementPage();
+
+  fetchPhotosAndCreatePage();
+}
+
+function createPhotoList(photos) {
+  const photosArray = photos.hits;
+  const totalHits = photos.totalHits;
+
+  totalCount += photosArray.length;
+
+  if (photosArray.length === 0) {
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
+
+  if (totalHits !== 0 && totalCount >= totalHits) {
+    Notiflix.Notify.warning(
+      "We're sorry, but you've reached the end of search results."
+    );
+  }
+
+  if (totalHits !== 0) {
+    Notiflix.Notify.success(`We found ${photosArray.length} images.`);
+  }
+
+  if (totalCount < totalHits) {
+    picturesAPI.showLoadMoreBtn();
+  } else {
+    picturesAPI.hideLoadMoreBtn();
+  }
+
+  createPhotosList(photosArray);
+}
+
+
+async function fetchPhotosAndCreatePage() {
+  try {
+    const photoList = await picturesAPI.fetchImages();
+    createPhotoList(photoList);
+  } catch (error) {
+    console.log(error);
+  }
+
+}
+
+function createPhotosList(photosArray) {
+  const markupPhotoList = photosArray
+    .map(photo => {
+      return `
+          <div class="photo-card">
+          <a class="gallery__item" href="${photo.largeImageURL}">
+           <img class="gallery__image" src="${photo.webformatURL}" alt="${photo.tags}" loading="lazy"/>
+          </a>
+            <div class="info">
+               <div class="info-item">
+                 <p><b>Likes: </b></p> <p>${photo.likes}</p>
+              </div>
+              <div class="info-item">
+                <p><b>Views: </b></p> <p>${photo.views}</p>
+              </div>
+              <div class="info-item">
+                <p><b>Comments: </b></p> <p>${photo.comments}</p>
+              </div>
+              <div class="info-item">
+                <p><b>Downloads: </b></p> <p>${photo.downloads}</p>
+              </div>
+           </div>
+          </div>
+          `;
+    })
+    .join('');
+
+  galleryImage.insertAdjacentHTML('beforeend', markupPhotoList);
   let gallery = new SimpleLightbox('.gallery a');
   gallery.on('show.simplelightbox');
 }
 
-
-
-
-
-
-
-
- 
-// const delay = 300;
-// const timeOut = 5000;
-
-// const ref = {
-//   inputField: document.querySelector('#search-box'),
-//   countryList: document.querySelector('.country-list'),
-//   countryInfo: document.querySelector('.country-info'),
-// };
-
-// ref.inputField.addEventListener('input', debounce(searchCountry, delay));
-
-// function searchCountry(e) {
-//   const valueInput = e.target.value.trim();
-
-//   if (valueInput.length === 0) {
-//     Notiflix.Notify.warning('Remember the countries you studied at school!', {
-//       timeout: timeOut,
-//     });
-//     return;
-//   } else if (valueInput.length === 1) {
-//     Notiflix.Notify.info('Too few letters, write more :)', {
-//       timeout: timeOut,
-//     });
-
-//     ref.countryList.innerHTML = '';
-//     ref.countryInfo.innerHTML = '';
-//     ref.inputField.removeEventListener('input', e);
-
-//     return;
-//   }
-
-//   fetchCountries(valueInput)
-//     .then(chooseCountry)
-//     .catch(error => {
-//       Notiflix.Notify.failure('Oops, there is no country with that name', {
-//         timeout: timeOut,
-//       });
-//       ref.countryList.innerHTML = '';
-//       ref.countryInfo.innerHTML = '';
-//     });
-// }
-
-// function chooseCountry(countries) {
-//   const findCountriesNumber = countries.length;
-
-//   const findCountriesGrid = countries
-//     .map(
-//       ({ name: { official }, flags: { svg } }) =>
-//         `<li class="country"><img src="${svg}" alt="Flag of ${official}" />
-//       <h1>${official}</h1></li>`
-//     )
-//     .join('');
-//   ref.countryList.innerHTML = findCountriesGrid;
-
-//   if (findCountriesNumber === 1) {
-//     const bigRenderCountry = document.querySelector('.country');
-//     bigRenderCountry.classList.add('big');
-
-//     const findCountryInfo = countries
-//       .map(
-//         ({ capital, population, languages }) =>
-//           `<p><img width="18px" src="https://cdn-icons-png.flaticon.com/128/2072/2072130.png"/><b>Capital: </b>${capital}</p>
-//          <p><img width="18px" src="https://cdn-icons-png.flaticon.com/512/4596/4596328.png"/><b>Population: </b>${population}</p>
-//          <p><img width="18px" src="https://cdn-icons-png.flaticon.com/512/7955/7955519.png"/><b>Languages: </b>${Object.values(
-//            languages
-//          )}</p>`
-//       )
-//       .join('');
-//     ref.countryInfo.innerHTML = findCountryInfo;
-//     return;
-//   }
-
-//   if (findCountriesNumber > 10) {
-//     Notiflix.Notify.warning(
-//       'Too many matches found. Please enter a more specific name.',
-//       {
-//         timeout: timeOut,
-//       }
-//     );
-//   }
-
-//   ref.countryInfo.innerHTML = '';
-// }
