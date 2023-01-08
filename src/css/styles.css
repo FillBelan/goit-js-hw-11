@@ -9,65 +9,87 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #fafafa;
   color: #212121;
+  margin: 0;
   line-height: 1.5;
+  background: rgb(254, 255, 112);
+  background: linear-gradient(90deg, rgba(254, 255, 112, 1) 0%, rgba(255, 255, 255, 1) 50%, rgba(254, 255, 112, 1) 100%);
 }
 
-#search-box {
-  font: inherit;
-  padding: 8px;
-  max-width: 320px;
-  margin-bottom: 16px;
-}
-
-.country-list {
+.search-form {
   display: flex;
-  gap: 50px;
   justify-content: center;
+  background: rgb(0, 212, 255);
+  background: linear-gradient(90deg, rgba(0, 212, 255, 1) 0%, rgba(9, 9, 121, 1) 50%, rgba(0, 212, 255, 1) 100%);
+  padding-top: 20px;
+  padding-bottom: 20px;
+  gap: 10px;
+
+}
+
+.search-form input {
+  height: 35px;
+  outline: none;
+  border-radius: 5px;
+  font-size: 25px;
+}
+
+.search-form button {
+  border-radius: 5px;
+  background-color: rgb(250, 250, 250);
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+}
+
+.search-form button:hover {
+  background-color: rgb(121, 255, 141);
+}
+
+.search-form button:focus {
+  background-color: rgb(121, 255, 141);
+}
+
+.gallery {
+  display: flex;
   flex-wrap: wrap;
-  padding: 0;
+  gap: 30px;
+  justify-content: center;
+  margin-top: 40px;
 }
 
-.country {
-  list-style: none;
+.photo-card {
+  width: 600px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+.photo-card:hover {
+  box-shadow: 0 7px 20px 0 rgba(0, 0, 0, 0.3);
+}
+
+.photo-card:focus {
+  box-shadow: 0 7px 20px 0 rgba(0, 0, 0, 0.3);
+}
+
+.photo-card img {
+  width: 600px;
+  height: 400px;
+  overflow: hidden;
+}
+
+.info {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  padding: 20px 50px;
+}
+
+.info-item {
   display: flex;
   flex-direction: column;
-
+  align-items: center;
 }
 
-.country img {
-  border-radius: 10px;
-  height: 160px;
-
-}
-
-.country h1 {
-  text-align: center;
-
-}
-
-.country-info {
-
-  text-align: center;
-  width: 500px;
-  display: flex;
-  flex-direction: column;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 10px;
-  background-color: antiquewhite;
-  box-shadow: 0px 5px 5px -5px rgba(34, 60, 80, 0.6);
-
-
-}
-
-.country-info p {
-
-  font-size: 23px;
-
-  font-family: 'Patua One', cursive;
-  letter-spacing: 3px;
-}
-
-.country-info img {
-  margin-right: 6px;
+.info-item p {
+  margin: 0;
+  font-size: 20px;
 }
