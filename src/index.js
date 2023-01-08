@@ -84,7 +84,7 @@ async function fetchPhotosAndCreatePage() {
   } catch (error) {
     console.log(error);
   }
-
+  gallery.refresh();
 }
 
 function createPhotosList(photosArray) {
@@ -117,5 +117,6 @@ function createPhotosList(photosArray) {
   galleryImage.insertAdjacentHTML('beforeend', markupPhotoList);
   let gallery = new SimpleLightbox('.gallery a');
   gallery.on('show.simplelightbox');
-}
+
+};
 
